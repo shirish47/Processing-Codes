@@ -4,7 +4,7 @@ float mass =1;
 float radius =1;
 float charge = 0;
 float orbitMag =0;
-color pColor = color(#17C1A3);
+color pColor = color(#E3328B); //change particle color here.
 
 float colmapper =0;
 PVector vec;
@@ -41,7 +41,7 @@ void applyForce(PVector force) {
   void update() {
    if(!stuck){
         vec.add(acceleration);
-       vec.normalize().mult(1.7);   
+       vec.normalize().mult(1.1); //change this if you want to play with particle speeds.   
         pos.add(vec);
            
         prepos.set(pos);
@@ -71,7 +71,7 @@ void draw()
   int val=(int)(255*noise(mass,pos.x,pos.y));
   //println(pixels[mouseColselector]);
 
-    fill(#C93600);//pixels[val]);best color effect till now t#551EB7
+    fill(pColor);//pixels[val]);best color effect till now t#551EB7
    // rect(0,0,30,30);
     //stroke(map(colmapper,0,5,0,100),99,99);
     //tint(#551EB7);
@@ -95,32 +95,32 @@ void rest()
   if(stuck){
     pos.x =random(0+100,width-100);
     pos.y =random(0+100,height-100);
-  }//else
-  //{
-  // if(random(0,4)<2){
-  //      if(random(0,4)<2){
-  //          pos.x =random(-10,0);
-  //          pos.y =random(0,height);
-  //      }else
-  //      {
-  //        pos.x =random(width,width+10);
-  //        pos.y =random(0,height);
-  //      }
-  // }else{
-  //      if(random(0,4)<2){
-  //          pos.y =random(-10,0);
-  //          pos.x =random(0,width);
-  //      }else
-  //      {
-  //        pos.y =random(height,height+10);
-  //        pos.x =random(0,width);
-  //      }   
-  // }
-  //}
+  }  else
   {
-      pos.x =random(0,width);
-    pos.y =random(0,height);
+   if(random(0,4)<2){
+        if(random(0,4)<2){
+            pos.x =random(-10,0);
+            pos.y =random(0,height);
+        }else
+        {
+          pos.x =random(width,width+10);
+          pos.y =random(0,height);
+        }
+   }else{
+        if(random(0,4)<2){
+            pos.y =random(-10,0);
+            pos.x =random(0,width);
+        }else
+        {
+          pos.y =random(height,height+10);
+          pos.x =random(0,width);
+        }   
+   }
   }
+  //{
+  //  pos.x =random(0,width);
+  //  pos.y =random(0,height);
+  //}
 }
 void particleInfo()
 {
