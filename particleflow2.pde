@@ -1,6 +1,6 @@
 import geomerative.*; 
-PImage img;
-PImage pacimg;
+//PImage img;
+//PImage pacimg;
 RFont f;
 RShape grp;
 RPoint[] points;
@@ -13,12 +13,12 @@ void setup()
   size(1000,700);
   smooth(8);
   pixelDensity(2);
-  img =loadImage("pixpal.png");
-  pacimg =loadImage("particle.png");
-  imageMode(CENTER);
-   image(img,0,0);
-   loadPixels();
-  //translate(width/2,height/2);
+//  img =loadImage("pixpal.png");
+//  pacimg =loadImage("particle.png");
+//  imageMode(CENTER);
+//  image(img,0,0);
+//  loadPixels();
+//  translate(width/2,height/2);
    RG.init(this);
    grp = RG.getText("Shirish", "FreeSans.ttf", 350, CENTER);
   
@@ -78,7 +78,6 @@ void keyPressed()
     recording= !recording;
   }
 blendMode(BLEND);
-image(img,0,0);
 }
 void mousePressed()
 {
