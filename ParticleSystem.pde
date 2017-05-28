@@ -1,132 +1,86 @@
-class ParticleSystem{
-float numParticles=0;
-ArrayList<particle> particles= new ArrayList();
-ParticleSystem(float _np)
+import geomerative.*; 
+//PImage img;
+//PImage pacimg;
+RFont f;
+RShape grp;
+RPoint[] points;
+int mouseColselector=0;
+boolean stop =false;
+boolean recording =false;
+ParticleSystem ps;
+void setup()
 {
-  numParticles=_np;
-  particle p;
-  for(int i=0;i<numParticles;i++)
-  {
-    p = new particle();
-    //if(false)//random(0,9)<1)
-    //{
-    //  p.charge =0;
-    //  p.stuck=true;
-    //  p.mass =random(10,100);
-    //  p.orbitMag =random(-550,550);
-    //}else{
-      p.charge =1.000001;
-      p.mass = 1.7000003;
-      p.stuck=false;
-      //p.mass=(random(3,10));
-    //}
-    p.rest();
-    particles.add(p);
-  }
-}
-
-PVector gravityForce(particle p, particle q)
-{
-    float g= 2.0;
-    PVector force = PVector.sub(q.pos,p.pos);             // Calculate direction of force
-    float distance = force.mag();                                 // Distance between objects
-    distance = constrain(distance,0.001,660.0);                             // Limiting the distance to eliminate "extreme" results for very close or very far objects
-    force.normalize();                                            // Normalize vector (distance doesn't matter here, we just want this vector for direction)
-    float strength = (g * p.mass * q.mass) / (distance * distance ); // Calculate gravitional force magnitude
-    force.mult(strength);                                         // Get force vector --> magnitude * direction
-    return force;
-}
-PVector orbitalForce(particle p, particle q)
-{
-    float R=q.orbitMag;
-    PVector force = PVector.sub(p.pos,q.pos);//correct sequence             // Calculate direction of force
-    float distance = force.mag();                // Distance between objects
-    //if(distance<600)
-    {
-    distance = constrain(distance,1,1600.0);                             // Limiting the distance to eliminate "extreme" results for very close or very far objects
-    force.normalize();                                            // Normalize vector (distance doesn't matter here, we just want this vector for direction)
-    float strength = (R) / ( distance*distance); // Calculate gravitional force magnitude
-   PVector f;
-   //if(R<=0)
-   // f =force.cross(new PVector(0,0,1));
-   // else
-    f =force.cross(new PVector(0,0,-1));
-     
-   // println("force: "+force+" f: "+f+" str: "+strength);
-    f.mult(strength);
-    return f;
-    }// Get force vector --> magnitude * direction
-    //else{
-    //force.mult(0);
-    //return force;
-    //}
-    
-}
-PVector chargeForce(particle p, particle q)
-{
-    float u=10;
-    PVector force = PVector.sub(p.pos,q.pos);             // Calculate direction of force
-    float distance = force.mag();                                 // Distance between objects
-    distance = constrain(distance,0.1,50000.0);                             // Limiting the distance to eliminate "extreme" results for very close or very far objects
-    force.normalize();                                            // Normalize vector (distance doesn't matter here, we just want this vector for direction)
-    float strength = (u * p.charge * q.charge) / (distance * distance); // Calculate gravitional force magnitude
-    force.mult(strength);                                         // Get force vector --> magnitude * direction
-    return force;
- 
-}
-int stucked=0;
-void update()
-{
-  for(int i=0;i<numParticles;i++)
-  {
-   particle cp;
-    cp=particles.get(i);
-    for(int j=0;j<numParticles;j++){
-      particle _ocp;
-      _ocp = particles.get(j);
-      if(cp!=_ocp)
-      {
-        cp.applyForce(gravityForce(cp,_ocp));
-        cp.applyForce(chargeForce(cp,_ocp));
-       //if(_ocp.orbitMag!=0)
-        cp.applyForce(orbitalForce(cp,_ocp));
-      }
-
-    }
-  }
-  for(int i=0;i<numParticles;i++)
-  {
-   particle cp;
-   cp=particles.get(i);
-   cp.update(); 
- //  if(cp.stuck) //for debugging only
-    // stucked++;//for debugging only
-  }
-  //println(stucked);
- // stucked=0;//debugging purpose only
+  size(1000,700);
+  smooth(8);
+  pixelDensity(2);
+//  img =loadImage("pixpal.png");
+//  pacimg =loadImage("particle.png");
+//  imageMode(CENTER);
+//   image(img,0,0);
+//   loadPixels();
+  //translate(width/2,height/2);
+   RG.init(this);
+   grp = RG.getText("Text", "FreeSans.ttf", 350, CENTER);
+  
+  
+  ps=new ParticleSystem(500);          //change particle numbers here if you want.
+  RG.setPolygonizer(RG.UNIFORMLENGTH);
+  RG.setPolygonizerLength(27);
+  points = grp.getPoints();
+  
+        if(points!=null)
+        {
+            for(int i=0;i<points.length;i++)
+            {
+              //println("posX: "+points[i].x);
+              ps.addGravitor(width/2+(int)points[i].x,height/2+200 +(int)points[i].y);
+            }
+        }
+  
+    background(0);
+    blendMode(ADD);
 }
 void draw()
 {
-  for(int i=0;i<numParticles;i++)
-  {
-   particle cp;
-   cp=particles.get(i);
-   cp.draw(); 
-   //cp.particleInfo();//debugging
+//  mouseColselector =(int) map(mouseX,0,width,0,255);
+  if(stop){
+   //blendMode(BLEND);
+  fill(0,1);rect(0,0,width,height);
+   blendMode(ADD);
+ // if(random(0,9)<0.9)
+    {
+    //  blendMode(BLEND);
+      fill(0,1);rect(0,0,width,height);rect(0,0,width,height);
+    }
+  ps.update();
+   ps.draw();
+  if(recording && stop)
+   saveFrame("output/frames-######.png");
+   //println("drawing");
   }
+  //stroke(255);
+  
+  //grp.draw();
 }
-void addGravitor(int x,int y)
+void keyPressed()
 {
-  particle p= new particle(x,y); 
-  p.charge =0;
-      p.stuck=true;
-      p.mass =random(100,400);
-if(random(0,8)<5)
-      p.orbitMag =random(1600,5000);
- else
-     p.orbitMag=random(-5000,-1600);
-      //println("new Gravitor");
-  particles.add(p);
-  numParticles++;
+  if(key == ' ')
+  {
+    stop = !stop;
+    if(stop)
+    {
+    background(0);
+    loop();
+    }
+  }else if(key == 'R' || key=='r')
+  {
+    recording= !recording;
+  }
+blendMode(BLEND);
 }
+void mousePressed()
+{
+    ps.addGravitor(mouseX,mouseY);
+    fill(0,255,0);
+    ellipse(mouseX,mouseY,1,1);  
 }
